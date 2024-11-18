@@ -1,6 +1,10 @@
 from fastapi import FastAPI, APIRouter,Request
+from fastapi.openapi.utils import status_code_ranges
+from fastapi.responses import RedirectResponse,HTMLResponse,JSONResponse
+from fastapi.templating import Jinja2Templates
+from starlette.responses import Response
+
 from db.CURD.Link import AddLink,GetLink,DeleteLink
-from fastapi.responses import RedirectResponse
 import dotenv,os
 
 
@@ -11,9 +15,12 @@ app = FastAPI(
     version="0.1",
     description="api for url shorter",
 )
-
+templates = Jinja2Templates(directory="templates/")
 router = APIRouter()
 
+@app.get("/", response_class=HTMLResponse)
+async def read_root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
 @router.post("/AddUrl",tags=["Link shorter"])
 async def AddUrl(url: str,request: Request):
@@ -24,9 +31,8 @@ async def AddUrl(url: str,request: Request):
     error code -2 : invalid url
     """
     StatusAdd = AddLink(url)
-    print(request.client)
     if StatusAdd <= 0:
-        return {"Error" : StatusAdd}
+        return JSONResponse(status_code=500,content={"Error" : StatusAdd})
     else:
         return {"url" : f"{os.getenv('URLBALSE')}url/{StatusAdd}"}
 
@@ -54,6 +60,6 @@ def DeleteUrl(id:int):
     if StatusRemove == 1:
         return {"url" : "ok!"}
     else:
-        return {"error" : StatusRemove}
+        return JSONResponse(status_code=500,content={"Error" : StatusRemove})
 
 app.include_router(router)
