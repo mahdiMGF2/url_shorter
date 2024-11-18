@@ -2,13 +2,14 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
+database.db
 # C extensions
 *.so
 
 # Distribution / packaging
 .Python
 build/
+.idea
 develop-eggs/
 dist/
 downloads/
