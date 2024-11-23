@@ -1,4 +1,5 @@
-from db.models import Link,session
+from db.Base import session
+from db.models import Link
 from  sqlalchemy.exc import SQLAlchemyError
 import validators
 def AddLink(link:str,Link = Link) -> int:
